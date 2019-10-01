@@ -1,15 +1,10 @@
 ﻿using Kros.KORM;
-using Microsoft.AspNetCore.Http;
+using Mapster;
 using Microsoft.AspNetCore.Mvc;
-using SendGrid;
-using SendGrid.Helpers.Mail;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net;
-using System.Net.Mail;
 using System.Threading.Tasks;
-using ThumbnailSharp;
+using Microsoft.WindowsAzure.Storage.Blob;
+using Microsoft.WindowsAzure.Storage;
+using System;
 
 namespace Sample.CloundDesignPatterns.Controllers
 {
@@ -18,54 +13,53 @@ namespace Sample.CloundDesignPatterns.Controllers
     public class ImageCatalogController : ControllerBase
     {
         private readonly IDatabase _database;
+        private readonly CloudStorageAccount _cloudStorageAccount;
 
         public ImageCatalogController(IDatabase database)
         {
             _database = database;
+            _cloudStorageAccount = CloudStorageAccount.Parse("DefaultEndpointsProtocol=https;AccountName=zmaztesting;AccountKey=YcZYJhMr2UdJ3BGzOByLGnQI9olGyzL/y2lCf92WhEWlWPVZRk+5kfTVAlod7AA524lnHCGHqhg+CfLDWe7Esg==;EndpointSuffix=core.windows.net");
         }
 
         [HttpPost]
         [ProducesResponseType(201)]
-        public async Task<ActionResult> PostAsync([FromForm]PhotoViewModel viewModel)
+        public async Task<ActionResult> PostAsync(PhotoViewModel viewModel)
         {
-            if (viewModel.Image.Length != 0)
-            {
-                var photo = new Photo() { Description = viewModel.Description };
+            Photo photo = viewModel.Adapt<Photo>();
+            photo.Name = GetBlobName(photo.Name);
 
-                using (var ms = new MemoryStream())
+            await _database.AddAsync(photo);
+            StorageDocumentSas storageDocument = GetSharedAccessReferenceForUpload(photo.Name);
+
+            return Created(string.Empty, new { photo.Id, storageDocument });
+        }
+
+        private StorageDocumentSas GetSharedAccessReferenceForUpload(string blobName)
+        {
+            CloudBlockBlob blob = GetBlockBlobReference(blobName);
+            SharedAccessBlobPolicy policy = SharedAccessBlobPolicyFactory.Create(SharedAccessBlobPermissions.Write);
+            string blobCredentials = blob.GetSharedAccessSignature(policy);
+
+            return new StorageDocumentSas(blobCredentials, blob.Uri, blobName);
+        }
+
+        private CloudBlockBlob GetBlockBlobReference(string blobName)
+            => _cloudStorageAccount
+            .CreateCloudBlobClient()
+            .GetContainerReference("photos")
+            .GetBlockBlobReference(blobName);
+
+        private static class SharedAccessBlobPolicyFactory
+        {
+            public static SharedAccessBlobPolicy Create(SharedAccessBlobPermissions permissions)
+                => new SharedAccessBlobPolicy
                 {
-                    viewModel.Image.CopyTo(ms);
-                    var fileBytes = ms.ToArray();
-
-                    photo.Image = fileBytes;
-                    photo.Thumbnail = new ThumbnailCreator().CreateThumbnailBytes(20, fileBytes, Format.Jpeg);
+                    Permissions = permissions,
+                    SharedAccessExpiryTime = DateTime.UtcNow.AddMinutes(5)
                 };
-
-                await _database.AddAsync(photo);
-
-                await SendEmail();
-
-                return Created(string.Empty, new { photo.Id });
-            }
-            else
-            {
-                throw new ArgumentException();
-            }
         }
 
-        private static async Task SendEmail()
-        {
-            var apiKey = "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";
-            var client = new SendGridClient(apiKey);
-            var msg = new SendGridMessage()
-            {
-                From = new EmailAddress("martiniak@kros.sk", "Milan Martiniak"),
-                Subject = "Success",
-                PlainTextContent = "Váš obrázok bol spracovaný!",
-                HtmlContent = "<strong>Váš obrázok bol spracovaný!</strong>"
-            };
-            msg.AddTo(new EmailAddress("mino.martiniak@gmail.com", "Miňo"));
-            await client.SendEmailAsync(msg);
-        }
+        private string GetBlobName(string documentName)
+            => $"{Guid.NewGuid()}_{documentName}";
     }
 }

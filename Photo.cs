@@ -6,8 +6,6 @@
 
         public string Description { get; set; }
 
-        public byte[] Image { get; set; }
-
-        public byte[] Thumbnail { get; set; }
+        public string Name { get; set; }
     }
 }
