@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage;
 using System;
+using MassTransit;
 
 namespace Sample.CloundDesignPatterns.Controllers
 {
@@ -13,11 +14,13 @@ namespace Sample.CloundDesignPatterns.Controllers
     public class ImageCatalogController : ControllerBase
     {
         private readonly IDatabase _database;
+        private readonly IBusControl _bus;
         private readonly CloudStorageAccount _cloudStorageAccount;
 
-        public ImageCatalogController(IDatabase database)
+        public ImageCatalogController(IDatabase database, IBusControl bus)
         {
             _database = database;
+            _bus = bus;
             _cloudStorageAccount = CloudStorageAccount.Parse("DefaultEndpointsProtocol=https;AccountName=zmaztesting;AccountKey=YcZYJhMr2UdJ3BGzOByLGnQI9olGyzL/y2lCf92WhEWlWPVZRk+5kfTVAlod7AA524lnHCGHqhg+CfLDWe7Esg==;EndpointSuffix=core.windows.net");
         }
 
@@ -30,6 +33,8 @@ namespace Sample.CloundDesignPatterns.Controllers
 
             await _database.AddAsync(photo);
             StorageDocumentSas storageDocument = GetSharedAccessReferenceForUpload(photo.Name);
+
+            await _bus.Publish<IImageAcceptedMessage>(new { photo.Name });
 
             return Created(string.Empty, new { photo.Id, storageDocument });
         }

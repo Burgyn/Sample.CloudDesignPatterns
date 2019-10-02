@@ -1,4 +1,5 @@
 using Kros.KORM.Extensions.Asp;
+using Kros.MassTransit.AzureServiceBus;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -14,6 +15,12 @@ namespace Sample.CloundDesignPatterns
             Configuration = configuration;
         }
 
+        /// <summary>
+        /// Gets the configuration.
+        /// </summary>
+        /// <value>
+        /// The configuration.
+        /// </value>
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -22,6 +29,8 @@ namespace Sample.CloundDesignPatterns
             services.AddControllers();
             services.AddKorm(Configuration)
                 .UseDatabaseConfiguration<DatabaseConfiguration>();
+
+            services.AddMassTransitForAzure(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
