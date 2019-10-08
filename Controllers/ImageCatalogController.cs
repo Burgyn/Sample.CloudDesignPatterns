@@ -21,7 +21,7 @@ namespace Sample.CloundDesignPatterns.Controllers
         {
             _database = database;
             _bus = bus;
-            _cloudStorageAccount = CloudStorageAccount.Parse("DefaultEndpointsProtocol=https;AccountName=zmaztesting;AccountKey=YcZYJhMr2UdJ3BGzOByLGnQI9olGyzL/y2lCf92WhEWlWPVZRk+5kfTVAlod7AA524lnHCGHqhg+CfLDWe7Esg==;EndpointSuffix=core.windows.net");
+            _cloudStorageAccount = CloudStorageAccount.Parse("connectionstring");
         }
 
         [HttpPost]
