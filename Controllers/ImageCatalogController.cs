@@ -59,12 +59,12 @@ namespace Sample.CloundDesignPatterns.Controllers
             var client = new SendGridClient(apiKey);
             var msg = new SendGridMessage()
             {
-                From = new EmailAddress("martiniak@kros.sk", "Milan Martiniak"),
+                From = new EmailAddress("email", "meno"),
                 Subject = "Success",
                 PlainTextContent = "Váš obrázok bol spracovaný!",
                 HtmlContent = "<strong>Váš obrázok bol spracovaný!</strong>"
             };
-            msg.AddTo(new EmailAddress("mino.martiniak@gmail.com", "Miňo"));
+            msg.AddTo(new EmailAddress("email", "meno"));
             await client.SendEmailAsync(msg);
         }
     }
