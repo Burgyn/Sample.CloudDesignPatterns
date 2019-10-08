@@ -55,7 +55,7 @@ namespace Sample.CloundDesignPatterns.Controllers
 
         private static async Task SendEmail()
         {
-            var apiKey = "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";
+            var apiKey = "";
             var client = new SendGridClient(apiKey);
             var msg = new SendGridMessage()
             {
