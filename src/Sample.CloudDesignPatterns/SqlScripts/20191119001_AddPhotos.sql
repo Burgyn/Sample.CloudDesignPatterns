@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].Photos (
-    [Id] [int] NOT NULL,
+    [Id] [int] NOT NULL IDENTITY(1,1),
     [Description] [nvarchar](255),
 	[Name] [nvarchar](100),
 	[Image] [varbinary],
