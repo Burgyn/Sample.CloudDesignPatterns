@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
@@ -15,6 +15,7 @@
   <ItemGroup>
     <PackageReference Include="Kros.KORM" Version="4.0.0-alpha.11" />
     <PackageReference Include="Kros.KORM.Extensions.Asp" Version="1.1.0-alpha.4" />
+    <PackageReference Include="Mapster" Version="4.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.0.0">
       <PrivateAssets>all</PrivateAssets>
@@ -25,6 +26,8 @@
     <PackageReference Include="Sendgrid" Version="9.12.0" />
     <PackageReference Include="System.Drawing.Common" Version="4.6.0" />
     <PackageReference Include="ThumbnailSharp" Version="1.0.0" />
+    <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
+    <PackageReference Include="Kros.MassTransit.AzureServiceBus" Version="1.0.0-alpha.1" />
   </ItemGroup>
 
   <ItemGroup>

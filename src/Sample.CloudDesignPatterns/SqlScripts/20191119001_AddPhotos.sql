@@ -1,6 +1,7 @@
 ﻿CREATE TABLE [dbo].Photos (
     [Id] [int] NOT NULL,
     [Description] [nvarchar](255),
+	[Name] [nvarchar](100),
 	[Image] [varbinary] (maxlength),
 	[Thumbnail] [varbinary] (maxlength),
 CONSTRAINT [PK_People] PRIMARY KEY CLUSTERED ([Id] ASC)

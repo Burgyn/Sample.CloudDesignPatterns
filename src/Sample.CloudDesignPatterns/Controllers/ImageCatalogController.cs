@@ -1,12 +1,13 @@
 ﻿using Kros.KORM;
+using Mapster;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using SendGrid;
-using SendGrid.Helpers.Mail;
-using System;
-using System.IO;
 using System.Threading.Tasks;
-using ThumbnailSharp;
+using Microsoft.WindowsAzure.Storage.Blob;
+using Microsoft.WindowsAzure.Storage;
+using System;
+using MassTransit;
+using Sample.CloudDesignPatterns.Domain;
+using Microsoft.Extensions.Options;
 
 namespace Sample.CloudDesignPatterns.Controllers
 {
@@ -15,55 +16,57 @@ namespace Sample.CloudDesignPatterns.Controllers
     public class ImageCatalogController : ControllerBase
     {
         private readonly IDatabase _database;
-        private readonly IOptions<SendGridClientOptions> _sendGridOptions;
+        private readonly IBusControl _bus;
+        private readonly CloudStorageAccount _cloudStorageAccount;
 
-        public ImageCatalogController(IDatabase database, IOptions<SendGridClientOptions> sendGridOptions)
+        public ImageCatalogController(IDatabase database, IBusControl bus, IOptions<BlobStorageOptions> storageOptions)
         {
             _database = database;
-            _sendGridOptions = sendGridOptions;
+            _bus = bus;
+            _cloudStorageAccount = CloudStorageAccount.Parse(storageOptions.Value.ConnectionString);
         }
 
         [HttpPost]
         [ProducesResponseType(201)]
-        public async Task<ActionResult> PostAsync([FromForm]PhotoViewModel viewModel)
+        public async Task<ActionResult> PostAsync(PhotoViewModel viewModel)
         {
-            if (viewModel.Image.Length != 0)
-            {
-                var photo = new Photo() { Description = viewModel.Description };
+            Photo photo = viewModel.Adapt<Photo>();
+            photo.Name = GetBlobName(photo.Name);
 
-                using (var ms = new MemoryStream())
+            await _database.AddAsync(photo);
+            StorageDocumentSas storageDocument = GetSharedAccessReferenceForUpload(photo.Name);
+
+            await _bus.Publish<IImageAcceptedMessage>(new { photo.Name });
+
+            return Created(string.Empty, new { photo.Id, storageDocument });
+        }
+
+        private StorageDocumentSas GetSharedAccessReferenceForUpload(string blobName)
+        {
+            CloudBlockBlob blob = GetBlockBlobReference(blobName);
+            SharedAccessBlobPolicy policy = SharedAccessBlobPolicyFactory.Create(SharedAccessBlobPermissions.Write);
+            string blobCredentials = blob.GetSharedAccessSignature(policy);
+
+            return new StorageDocumentSas(blobCredentials, blob.Uri, blobName);
+        }
+
+        private CloudBlockBlob GetBlockBlobReference(string blobName)
+            => _cloudStorageAccount
+            .CreateCloudBlobClient()
+            .GetContainerReference("photos")
+            .GetBlockBlobReference(blobName);
+
+        private static class SharedAccessBlobPolicyFactory
+        {
+            public static SharedAccessBlobPolicy Create(SharedAccessBlobPermissions permissions)
+                => new SharedAccessBlobPolicy
                 {
-                    viewModel.Image.CopyTo(ms);
-                    var fileBytes = ms.ToArray();
-
-                    photo.Image = fileBytes;
-                    photo.Thumbnail = new ThumbnailCreator().CreateThumbnailBytes(20, fileBytes, Format.Jpeg);
+                    Permissions = permissions,
+                    SharedAccessExpiryTime = DateTime.UtcNow.AddMinutes(5)
                 };
-
-                await _database.AddAsync(photo);
-
-                await SendEmail();
-
-                return Created(string.Empty, new { photo.Id });
-            }
-            else
-            {
-                throw new ArgumentException();
-            }
         }
 
-        private async Task SendEmail()
-        {
-            var client = new SendGridClient(_sendGridOptions.Value.ApiKey);
-            var msg = new SendGridMessage()
-            {
-                From = new EmailAddress("email", "meno"),
-                Subject = "Success",
-                PlainTextContent = "Váš obrázok bol spracovaný!",
-                HtmlContent = "<strong>Váš obrázok bol spracovaný!</strong>"
-            };
-            msg.AddTo(new EmailAddress("email", "meno"));
-            await client.SendEmailAsync(msg);
-        }
+        private string GetBlobName(string documentName)
+            => $"{Guid.NewGuid()}_{documentName}";
     }
 }
