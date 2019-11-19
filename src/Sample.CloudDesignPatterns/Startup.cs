@@ -16,15 +16,15 @@ namespace Sample.CloudDesignPatterns
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
             services.AddKorm(Configuration)
-                .UseDatabaseConfiguration<DatabaseConfiguration>();
+                .UseDatabaseConfiguration<DatabaseConfiguration>()
+                .AddKormMigrations()
+                .Migrate();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -32,16 +32,12 @@ namespace Sample.CloudDesignPatterns
                 app.UseDeveloperExceptionPage();
             }
 
-            // app.UseHttpsRedirection();
-
-            app.UseRouting();
-
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseRouting()
+                .UseAuthorization()
+                .UseEndpoints(endpoints =>
+                {
+                    endpoints.MapControllers();
+                });
         }
     }
 }

@@ -1,8 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="SqlScripts\20191119001_AddPhotos.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="SqlScripts\20191119001_AddPhotos.sql" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Kros.KORM" Version="4.0.0-alpha.11" />
@@ -17,6 +25,21 @@
     <PackageReference Include="Sendgrid" Version="9.12.0" />
     <PackageReference Include="System.Drawing.Common" Version="4.6.0" />
     <PackageReference Include="ThumbnailSharp" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

@@ -1,13 +1,10 @@
 ﻿using Kros.KORM;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Net;
-using System.Net.Mail;
 using System.Threading.Tasks;
 using ThumbnailSharp;
 
@@ -18,10 +15,12 @@ namespace Sample.CloudDesignPatterns.Controllers
     public class ImageCatalogController : ControllerBase
     {
         private readonly IDatabase _database;
+        private readonly IOptions<SendGridClientOptions> _sendGridOptions;
 
-        public ImageCatalogController(IDatabase database)
+        public ImageCatalogController(IDatabase database, IOptions<SendGridClientOptions> sendGridOptions)
         {
             _database = database;
+            _sendGridOptions = sendGridOptions;
         }
 
         [HttpPost]
@@ -53,10 +52,9 @@ namespace Sample.CloudDesignPatterns.Controllers
             }
         }
 
-        private static async Task SendEmail()
+        private async Task SendEmail()
         {
-            var apiKey = "";
-            var client = new SendGridClient(apiKey);
+            var client = new SendGridClient(_sendGridOptions.Value.ApiKey);
             var msg = new SendGridMessage()
             {
                 From = new EmailAddress("email", "meno"),
