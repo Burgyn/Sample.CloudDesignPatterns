@@ -1,4 +1,4 @@
-﻿namespace Sample.CloundDesignPatterns
+﻿namespace Sample.CloudDesignPatterns
 {
     public class Photo
     {

@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "Sample.CloundDesignPatterns": {
+    "Sample.CloudDesignPatterns": {
       "commandName": "Project",
       "launchBrowser": false,
       "launchUrl": "weatherforecast",

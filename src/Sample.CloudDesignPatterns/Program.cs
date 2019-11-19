@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Sample.CloundDesignPatterns
+namespace Sample.CloudDesignPatterns
 {
     public class Program
     {

@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Sample.CloundDesignPatterns
+namespace Sample.CloudDesignPatterns
 {
     public class Startup
     {

@@ -11,7 +11,7 @@ using System.Net.Mail;
 using System.Threading.Tasks;
 using ThumbnailSharp;
 
-namespace Sample.CloundDesignPatterns.Controllers
+namespace Sample.CloudDesignPatterns.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

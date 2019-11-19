@@ -1,6 +1,6 @@
 using System;
 
-namespace Sample.CloundDesignPatterns
+namespace Sample.CloudDesignPatterns
 {
     public class WeatherForecast
     {

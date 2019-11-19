@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Sample.CloundDesignPatterns.Controllers
+namespace Sample.CloudDesignPatterns.Controllers
 {
     [ApiController]
     [Route("[controller]")]
