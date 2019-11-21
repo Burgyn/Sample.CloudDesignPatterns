@@ -17,7 +17,7 @@ namespace Sample.CloudDesignPatterns
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.ConfigureOptions<EmailOptions>(Configuration);
+            services.ConfigureOptions<EmailOptions>(Configuration);            
 
             services.AddControllers();
             services.AddKorm(Configuration)

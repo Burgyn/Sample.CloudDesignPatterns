@@ -28,7 +28,7 @@ namespace Sample.CloudDesignPatterns.Controllers
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Photo>))]
         public IEnumerable<Photo> Get()
-            => _database.Query<Photo>().Select("Name", "Description");
+            => _database.Query<Photo>().Select("Id", "Name", "Description");
 
         [HttpPost]
         [ProducesResponseType(201)]
