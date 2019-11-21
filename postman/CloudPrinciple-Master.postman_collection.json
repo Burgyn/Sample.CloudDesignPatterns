@@ -1,0 +1,87 @@
+{
+	"info": {
+		"_postman_id": "0a2c4e83-4f88-4dbe-81d6-056c6ccb1715",
+		"name": "CloudPrinciple-Master",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "PostImage",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "description",
+							"value": "Tatra 613",
+							"type": "text"
+						},
+						{
+							"key": "Image",
+							"type": "file",
+							"src": "/C:/Users/martiniak/Pictures/Camera Roll/129881596_polarr.jpg"
+						},
+						{
+							"key": "name",
+							"value": "Tatra 613",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/api/imagecatalog",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"imagecatalog"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Images",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/api/imagecatalog",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"imagecatalog"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
