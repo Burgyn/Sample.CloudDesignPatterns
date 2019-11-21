@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SendGrid;
-
 namespace Sample.CloudDesignPatterns
 {
     public class Startup
@@ -19,7 +17,7 @@ namespace Sample.CloudDesignPatterns
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.ConfigureOptions<SendGridClientOptions>(Configuration);
+            services.ConfigureOptions<EmailOptions>(Configuration);
 
             services.AddControllers();
             services.AddKorm(Configuration)
