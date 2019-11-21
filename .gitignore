@@ -341,3 +341,5 @@ healthchecksdb
 
 # Local settings
 appsettings.local.json
+Sample.AzureFunctionApps/local.settings.json
+Sample.AzureFunctionApps/local.settings.json
