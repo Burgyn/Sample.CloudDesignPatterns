@@ -36,7 +36,7 @@ namespace Sample.CloudDesignPatterns.Controllers
         {
             if (viewModel.Image.Length != 0)
             {
-                var photo = new Photo() { Description = viewModel.Description };
+                var photo = new Photo() { Description = viewModel.Description, Name = viewModel.Name };
 
                 using (var ms = new MemoryStream())
                 {
