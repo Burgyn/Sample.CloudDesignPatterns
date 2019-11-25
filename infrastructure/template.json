@@ -539,7 +539,7 @@
         "DatabaseConnectionString":
         {
             "type": "string",
-            "value": "[concat('Server=tcp:', variables('sqlServerName'), ',1433; Initial Catalog=', variables('databaseName'), ';Persist Security Info=False;User ID=FriUser;Password=', parameters('password'), ';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]"
+            "value": "[concat('Server=tcp:', variables('sqlServerName'), '.database.windows.net,1433; Initial Catalog=', variables('databaseName'), ';Persist Security Info=False;User ID=FriUser;Password=', parameters('password'), ';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]"
         }
     }
 }
