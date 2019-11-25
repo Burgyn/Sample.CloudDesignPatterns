@@ -1,0 +1,619 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sites_fri_photos_as_test_name": {
+            "defaultValue": "fri-photos-as-test",
+            "type": "String"
+        },
+        "servers_fri_photos_dbs_test_name": {
+            "defaultValue": "fri-photos-dbs-test",
+            "type": "String"
+        },
+        "sites_fri_photos_fa_testing_name": {
+            "defaultValue": "fri-photos-fa-testing",
+            "type": "String"
+        },
+        "serverfarms_fri_photos_asp_test_name": {
+            "defaultValue": "fri-photos-asp-test",
+            "type": "String"
+        },
+        "components_fri_photos_as_test_name": {
+            "defaultValue": "fri-photos-as-test",
+            "type": "String"
+        },
+        "serverfarms_ASP_FriPhotosRgTest_b434_name": {
+            "defaultValue": "ASP-FriPhotosRgTest-b434",
+            "type": "String"
+        },
+        "storageAccounts_friphotossatesting_name": {
+            "defaultValue": "friphotossatesting",
+            "type": "String"
+        },
+        "namespaces_fri_photos_sb_testing_name": {
+            "defaultValue": "fri-photos-sb-testing",
+            "type": "String"
+        },
+        "actionGroups_Application_20Insights_20Smart_20Detection_name": {
+            "defaultValue": "Application%20Insights%20Smart%20Detection",
+            "type": "String"
+        },
+        "smartdetectoralertrules_failure_anomalies___fri_photos_as_test_name": {
+            "defaultValue": "failure anomalies - fri-photos-as-test",
+            "type": "String"
+        },
+        "fri_photos_database_name": {
+            "defaultValue": "fri-photos-db-test",
+            "type": "String"
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Location for all resources."
+            }
+        },
+        "password": {
+            "type": "SecureString",
+            "defaultValue": "super tajne heslo, ktore je ulozene niekte inde"
+        }
+    },
+    "variables": {
+        "sqlServerName": "[parameters('servers_fri_photos_dbs_test_name')]",
+        "databaseName": "[parameters('fri_photos_database_name')]",
+        "defaultSASKeyName": "RootManageSharedAccessKey",
+        "authRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', parameters('namespaces_fri_photos_sb_testing_name'), variables('defaultSASKeyName'))]",
+	    "sbVersion": "2017-04-01"
+    },
+    "resources": [{
+            "type": "microsoft.insights/actionGroups",
+            "apiVersion": "2019-03-01",
+            "name": "[parameters('actionGroups_Application_20Insights_20Smart_20Detection_name')]",
+            "location": "Global",
+            "properties": {
+                "groupShortName": "SmartDetect",
+                "enabled": true,
+                "emailReceivers": [],
+                "smsReceivers": [],
+                "webhookReceivers": [],
+                "itsmReceivers": [],
+                "azureAppPushReceivers": [],
+                "automationRunbookReceivers": [],
+                "voiceReceivers": [],
+                "logicAppReceivers": [],
+                "azureFunctionReceivers": []
+            }
+        },
+        {
+            "type": "microsoft.insights/components",
+            "apiVersion": "2015-05-01",
+            "name": "[parameters('components_fri_photos_as_test_name')]",
+            "location": "westeurope",
+            "kind": "web",
+            "properties": {
+                "Application_Type": "web",
+                "Request_Source": "IbizaWebAppExtensionCreate"
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces",
+            "apiVersion": "2018-01-01-preview",
+            "name": "[parameters('namespaces_fri_photos_sb_testing_name')]",
+            "location": "West Europe",
+            "sku": {
+                "name": "Basic",
+                "tier": "Basic"
+            },
+            "properties": {
+                "zoneRedundant": false
+            }
+        },
+        {
+            "type": "Microsoft.Sql/servers",
+            "apiVersion": "2015-05-01-preview",
+            "name": "[variables('sqlServerName')]",
+            "location": "westeurope",
+            "kind": "v12.0",
+            "properties": {
+                "administratorLogin": "FriUser",
+                "administratorLoginPassword": "[parameters('password')]",
+                "version": "12.0"
+            },
+            "resources": [{
+                    "type": "databases",
+                    "apiVersion": "2017-10-01-preview",
+                    "name": "[variables('databaseName')]",
+                    "location": "westeurope",
+                    "dependsOn": [
+                        "[variables('sqlServerName')]"
+                    ],
+                    "sku": {
+                        "name": "Basic",
+                        "tier": "Basic",
+                        "capacity": 5
+                    },
+                    "kind": "v12.0,user",
+                    "properties": {
+                        "collation": "SQL_Latin1_General_CP1_CI_AS",
+                        "maxSizeBytes": 2147483648,
+                        "catalogCollation": "SQL_Latin1_General_CP1_CI_AS",
+                        "zoneRedundant": false,
+                        "readScale": "Disabled",
+                        "readReplicaCount": 0
+                    }
+                },
+                {
+                    "name": "AllowAllMicrosoftAzureIps",
+                    "type": "firewallrules",
+                    "apiVersion": "2014-04-01",
+                    "location": "[parameters('location')]",
+                    "properties": {
+                        "endIpAddress": "255.255.255.255",
+                        "startIpAddress": "0.0.0.0"
+                    },
+                    "dependsOn": [
+                        "[variables('sqlServerName')]"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-04-01",
+            "name": "[parameters('storageAccounts_friphotossatesting_name')]",
+            "location": "westeurope",
+            "sku": {
+                "name": "Standard_RAGRS",
+                "tier": "Standard"
+            },
+            "kind": "StorageV2",
+            "properties": {
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "virtualNetworkRules": [],
+                    "ipRules": [],
+                    "defaultAction": "Allow"
+                },
+                "supportsHttpsTrafficOnly": true,
+                "encryption": {
+                    "services": {
+                        "file": {
+                            "enabled": true
+                        },
+                        "blob": {
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                },
+                "accessTier": "Hot"
+            }
+        },
+        {
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2018-02-01",
+            "name": "[parameters('serverfarms_ASP_FriPhotosRgTest_b434_name')]",
+            "location": "West Europe",
+            "sku": {
+                "name": "Y1",
+                "tier": "Dynamic",
+                "size": "Y1",
+                "family": "Y",
+                "capacity": 0
+            },
+            "kind": "functionapp",
+            "properties": {
+                "perSiteScaling": false,
+                "maximumElasticWorkerCount": 1,
+                "isSpot": false,
+                "reserved": false,
+                "isXenon": false,
+                "hyperV": false,
+                "targetWorkerCount": 0,
+                "targetWorkerSizeId": 0
+            }
+        },
+        {
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2018-02-01",
+            "name": "[parameters('serverfarms_fri_photos_asp_test_name')]",
+            "location": "West Europe",
+            "sku": {
+                "name": "F1",
+                "tier": "Free",
+                "size": "F1",
+                "family": "F",
+                "capacity": 0
+            },
+            "kind": "app",
+            "properties": {
+                "perSiteScaling": false,
+                "maximumElasticWorkerCount": 1,
+                "isSpot": false,
+                "reserved": false,
+                "isXenon": false,
+                "hyperV": false,
+                "targetWorkerCount": 0,
+                "targetWorkerSizeId": 0
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/AuthorizationRules",
+            "apiVersion": "2017-04-01",
+            "name": "[concat(parameters('namespaces_fri_photos_sb_testing_name'), '/RootManageSharedAccessKey')]",
+            "location": "West Europe",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_fri_photos_sb_testing_name'))]"
+            ],
+            "properties": {
+                "rights": [
+                    "Listen",
+                    "Manage",
+                    "Send"
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices",
+            "apiVersion": "2019-04-01",
+            "name": "[concat(parameters('storageAccounts_friphotossatesting_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_friphotossatesting_name'))]"
+            ],
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                },
+                "deleteRetentionPolicy": {
+                    "enabled": false
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2018-11-01",
+            "name": "[parameters('sites_fri_photos_as_test_name')]",
+            "location": "West Europe",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_fri_photos_asp_test_name'))]"
+            ],
+            "kind": "app",
+            "properties": {
+                "enabled": true,
+                "hostNameSslStates": [{
+                        "name": "[concat(parameters('sites_fri_photos_as_test_name'), '.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "hostType": "Standard"
+                    },
+                    {
+                        "name": "[concat(parameters('sites_fri_photos_as_test_name'), '.scm.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "hostType": "Repository"
+                    }
+                ],
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_fri_photos_asp_test_name'))]",
+                "reserved": false,
+                "isXenon": false,
+                "hyperV": false,
+                "scmSiteAlsoStopped": false,
+                "clientAffinityEnabled": true,
+                "clientCertEnabled": false,
+                "hostNamesDisabled": false,
+                "containerSize": 0,
+                "dailyMemoryTimeQuota": 0,
+                "httpsOnly": false,
+                "redundancyMode": "None"
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2018-11-01",
+            "name": "[parameters('sites_fri_photos_fa_testing_name')]",
+            "location": "West Europe",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_ASP_FriPhotosRgTest_b434_name'))]"
+            ],
+            "kind": "functionapp",
+            "properties": {
+                "enabled": true,
+                "hostNameSslStates": [{
+                        "name": "[concat(parameters('sites_fri_photos_fa_testing_name'), '.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "hostType": "Standard"
+                    },
+                    {
+                        "name": "[concat(parameters('sites_fri_photos_fa_testing_name'), '.scm.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "hostType": "Repository"
+                    }
+                ],
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_ASP_FriPhotosRgTest_b434_name'))]",
+                "reserved": false,
+                "isXenon": false,
+                "hyperV": false,
+                "scmSiteAlsoStopped": false,
+                "clientAffinityEnabled": true,
+                "clientCertEnabled": false,
+                "hostNamesDisabled": false,
+                "containerSize": 1536,
+                "dailyMemoryTimeQuota": 0,
+                "httpsOnly": false,
+                "redundancyMode": "None"
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/config",
+            "apiVersion": "2016-08-01",
+            "name": "[concat(parameters('sites_fri_photos_as_test_name'), '/web')]",
+            "location": "West Europe",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_fri_photos_as_test_name'))]"
+            ],
+            "properties": {
+                "numberOfWorkers": 1,
+                "defaultDocuments": [
+                    "Default.htm",
+                    "Default.html",
+                    "Default.asp",
+                    "index.htm",
+                    "index.html",
+                    "iisstart.htm",
+                    "default.aspx",
+                    "index.php",
+                    "hostingstart.html"
+                ],
+                "netFrameworkVersion": "v4.0",
+                "phpVersion": "5.6",
+                "pythonVersion": "",
+                "nodeVersion": "",
+                "linuxFxVersion": "",
+                "requestTracingEnabled": false,
+                "remoteDebuggingEnabled": false,
+                "httpLoggingEnabled": false,
+                "logsDirectorySizeLimit": 35,
+                "detailedErrorLoggingEnabled": false,
+                "publishingUsername": "$fri-photos-as-test",
+                "scmType": "None",
+                "use32BitWorkerProcess": true,
+                "webSocketsEnabled": false,
+                "alwaysOn": false,
+                "appCommandLine": "",
+                "managedPipelineMode": "Integrated",
+                "virtualApplications": [{
+                    "virtualPath": "/",
+                    "physicalPath": "site\\wwwroot",
+                    "preloadEnabled": false,
+                    "virtualDirectories": null
+                }],
+                "winAuthAdminState": 0,
+                "winAuthTenantState": 0,
+                "customAppPoolIdentityAdminState": false,
+                "customAppPoolIdentityTenantState": false,
+                "loadBalancing": "LeastRequests",
+                "routingRules": [],
+                "experiments": {
+                    "rampUpRules": []
+                },
+                "autoHealEnabled": false,
+                "vnetName": "",
+                "siteAuthEnabled": false,
+                "siteAuthSettings": {
+                    "enabled": null,
+                    "unauthenticatedClientAction": null,
+                    "tokenStoreEnabled": null,
+                    "allowedExternalRedirectUrls": null,
+                    "defaultProvider": null,
+                    "clientId": null,
+                    "clientSecret": null,
+                    "clientSecretCertificateThumbprint": null,
+                    "issuer": null,
+                    "allowedAudiences": null,
+                    "additionalLoginParams": null,
+                    "isAadAutoProvisioned": false,
+                    "googleClientId": null,
+                    "googleClientSecret": null,
+                    "googleOAuthScopes": null,
+                    "facebookAppId": null,
+                    "facebookAppSecret": null,
+                    "facebookOAuthScopes": null,
+                    "twitterConsumerKey": null,
+                    "twitterConsumerSecret": null,
+                    "microsoftAccountClientId": null,
+                    "microsoftAccountClientSecret": null,
+                    "microsoftAccountOAuthScopes": null
+                },
+                "localMySqlEnabled": false,
+                "http20Enabled": false,
+                "minTlsVersion": "1.2",
+                "ftpsState": "AllAllowed",
+                "reservedInstanceCount": 0,
+                "fileChangeAuditEnabled": false,
+                "functionsRuntimeScaleMonitoringEnabled": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/config",
+            "apiVersion": "2016-08-01",
+            "name": "[concat(parameters('sites_fri_photos_fa_testing_name'), '/web')]",
+            "location": "West Europe",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_fri_photos_fa_testing_name'))]"
+            ],
+            "properties": {
+                "numberOfWorkers": 1,
+                "defaultDocuments": [
+                    "Default.htm",
+                    "Default.html",
+                    "Default.asp",
+                    "index.htm",
+                    "index.html",
+                    "iisstart.htm",
+                    "default.aspx",
+                    "index.php"
+                ],
+                "netFrameworkVersion": "v4.0",
+                "phpVersion": "5.6",
+                "pythonVersion": "",
+                "nodeVersion": "",
+                "linuxFxVersion": "",
+                "requestTracingEnabled": false,
+                "remoteDebuggingEnabled": false,
+                "httpLoggingEnabled": false,
+                "logsDirectorySizeLimit": 35,
+                "detailedErrorLoggingEnabled": false,
+                "publishingUsername": "$fri-photos-fa-testing",
+                "scmType": "None",
+                "use32BitWorkerProcess": true,
+                "webSocketsEnabled": false,
+                "alwaysOn": false,
+                "appCommandLine": "",
+                "managedPipelineMode": "Integrated",
+                "virtualApplications": [{
+                    "virtualPath": "/",
+                    "physicalPath": "site\\wwwroot",
+                    "preloadEnabled": false,
+                    "virtualDirectories": null
+                }],
+                "winAuthAdminState": 0,
+                "winAuthTenantState": 0,
+                "customAppPoolIdentityAdminState": false,
+                "customAppPoolIdentityTenantState": false,
+                "loadBalancing": "LeastRequests",
+                "routingRules": [],
+                "experiments": {
+                    "rampUpRules": []
+                },
+                "autoHealEnabled": false,
+                "vnetName": "",
+                "siteAuthEnabled": false,
+                "siteAuthSettings": {
+                    "enabled": null,
+                    "unauthenticatedClientAction": null,
+                    "tokenStoreEnabled": null,
+                    "allowedExternalRedirectUrls": null,
+                    "defaultProvider": null,
+                    "clientId": null,
+                    "clientSecret": null,
+                    "clientSecretCertificateThumbprint": null,
+                    "issuer": null,
+                    "allowedAudiences": null,
+                    "additionalLoginParams": null,
+                    "isAadAutoProvisioned": false,
+                    "googleClientId": null,
+                    "googleClientSecret": null,
+                    "googleOAuthScopes": null,
+                    "facebookAppId": null,
+                    "facebookAppSecret": null,
+                    "facebookOAuthScopes": null,
+                    "twitterConsumerKey": null,
+                    "twitterConsumerSecret": null,
+                    "microsoftAccountClientId": null,
+                    "microsoftAccountClientSecret": null,
+                    "microsoftAccountOAuthScopes": null
+                },
+                "cors": {
+                    "allowedOrigins": [
+                        "https://functions.azure.com",
+                        "https://functions-staging.azure.com",
+                        "https://functions-next.azure.com"
+                    ],
+                    "supportCredentials": false
+                },
+                "localMySqlEnabled": false,
+                "http20Enabled": false,
+                "minTlsVersion": "1.2",
+                "ftpsState": "AllAllowed",
+                "reservedInstanceCount": 0,
+                "fileChangeAuditEnabled": false,
+                "functionsRuntimeScaleMonitoringEnabled": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/hostNameBindings",
+            "apiVersion": "2018-11-01",
+            "name": "[concat(parameters('sites_fri_photos_as_test_name'), '/', parameters('sites_fri_photos_as_test_name'), '.azurewebsites.net')]",
+            "location": "West Europe",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_fri_photos_as_test_name'))]"
+            ],
+            "properties": {
+                "siteName": "fri-photos-as-test",
+                "hostNameType": "Verified"
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/hostNameBindings",
+            "apiVersion": "2018-11-01",
+            "name": "[concat(parameters('sites_fri_photos_fa_testing_name'), '/', parameters('sites_fri_photos_fa_testing_name'), '.azurewebsites.net')]",
+            "location": "West Europe",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_fri_photos_fa_testing_name'))]"
+            ],
+            "properties": {
+                "siteName": "fri-photos-fa-testing",
+                "hostNameType": "Verified"
+            }
+        },
+        {
+            "type": "microsoft.alertsmanagement/smartdetectoralertrules",
+            "apiVersion": "2019-06-01",
+            "name": "[parameters('smartdetectoralertrules_failure_anomalies___fri_photos_as_test_name')]",
+            "location": "global",
+            "dependsOn": [
+                "[resourceId('microsoft.insights/components', parameters('components_fri_photos_as_test_name'))]",
+                "[resourceId('microsoft.insights/actionGroups', parameters('actionGroups_Application_20Insights_20Smart_20Detection_name'))]"
+            ],
+            "properties": {
+                "description": "Failure Anomalies notifies you of an unusual rise in the rate of failed HTTP requests or dependency calls.",
+                "state": "Enabled",
+                "severity": "Sev3",
+                "frequency": "PT1M",
+                "detector": {
+                    "id": "FailureAnomaliesDetector"
+                },
+                "scope": [
+                    "[resourceId('microsoft.insights/components', parameters('components_fri_photos_as_test_name'))]"
+                ],
+                "actionGroups": {
+                    "groupIds": [
+                        "[resourceId('microsoft.insights/actionGroups', parameters('actionGroups_Application_20Insights_20Smart_20Detection_name'))]"
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2019-04-01",
+            "name": "[concat(parameters('storageAccounts_friphotossatesting_name'), '/default/azure-webjobs-hosts')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_friphotossatesting_name'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_friphotossatesting_name'))]"
+            ],
+            "properties": {
+                "publicAccess": "None"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2019-04-01",
+            "name": "[concat(parameters('storageAccounts_friphotossatesting_name'), '/default/azure-webjobs-secrets')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_friphotossatesting_name'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_friphotossatesting_name'))]"
+            ],
+            "properties": {
+                "publicAccess": "None"
+            }
+        }
+    ],
+    "outputs": {
+        "NamespaceConnectionString": {
+          "type": "string",
+          "value": "[listkeys(variables('authRuleResourceId'), variables('sbVersion')).primaryConnectionString]"
+        },
+        "SharedAccessPolicyPrimaryKey": {
+          "type": "string",
+          "value": "[listkeys(variables('authRuleResourceId'), variables('sbVersion')).primaryKey]"
+        }
+      }
+}
