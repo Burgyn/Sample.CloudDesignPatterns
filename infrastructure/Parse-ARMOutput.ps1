@@ -12,6 +12,8 @@ Write-Output -InputObject ('Connection string {0} ' -f $json.NamespaceConnection
 
 Write-Host " Krok 2"
 
-Write-Host "##vso[task.setvariable variable=AzureServiceBus.ConnectionString]$json.NamespaceConnectionString.value"
+$constring = $json.NamespaceConnectionString.value
+
+Write-Host "##vso[task.setvariable variable=AzureServiceBus.ConnectionString]$constring"
 
 Write-Host " Krok 3"
