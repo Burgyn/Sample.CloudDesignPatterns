@@ -19,17 +19,17 @@
         }
     },
     "variables": {
-        "sqlServerName": "[concat('fri-photos-dbs-', parameters('deployment_stage_name')]",
+        "sqlServerName": "[concat('fri-photos-dbs-', parameters('deployment_stage_name'))]",
         "databaseName": "fri_photos_db",
         "defaultSASKeyName": "RootManageSharedAccessKey",
-        "serviceBusNamespaceName":"[concat('fri-photos-sb-', parameters('deployment_stage_name')]",
+        "serviceBusNamespaceName":"[concat('fri-photos-sb-', parameters('deployment_stage_name'))]",
         "authRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNamespaceName'), variables('defaultSASKeyName'))]",
         "sbVersion": "2017-04-01",
-        "AppServiceName": "[concat('fri-photos-as-', parameters('deployment_stage_name')]",
-        "AzureFunctionSiteName": "[concat('fri-photos-fa-', parameters('deployment_stage_name')]",
-        "AppServicePlanName": "[concat('fri-photos-asp-', parameters('deployment_stage_name')]",
-        "AzureFunctionPlanName": "[concat('fri-photos-azp-', parameters('deployment_stage_name')]",
-        "StorageAccountsName": "[concat('friphotossa', parameters('deployment_stage_name')]"
+        "AppServiceName": "[concat('fri-photos-as-', parameters('deployment_stage_name'))]",
+        "AzureFunctionSiteName": "[concat('fri-photos-fa-', parameters('deployment_stage_name'))]",
+        "AppServicePlanName": "[concat('fri-photos-asp-', parameters('deployment_stage_name'))]",
+        "AzureFunctionPlanName": "[concat('fri-photos-azp-', parameters('deployment_stage_name'))]",
+        "StorageAccountsName": "[concat('friphotossa', parameters('deployment_stage_name')])"
     },
     "resources": [
         {
