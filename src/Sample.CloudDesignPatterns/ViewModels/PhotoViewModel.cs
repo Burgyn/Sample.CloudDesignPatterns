@@ -10,6 +10,8 @@ namespace Sample.CloudDesignPatterns
     {
         public string Description { get; set; }
 
+        public string Name { get; set; }
+
         public IFormFile Image { get; set; }
     }
 }

@@ -22,6 +22,8 @@ namespace Sample.CloudDesignPatterns
             services.ConfigureOptions<BlobStorageOptions>(Configuration);
 
             services.AddControllers();
+            services.AddMassTransitForAzure(Configuration);
+
             services.AddKorm(Configuration)
                 .UseDatabaseConfiguration<DatabaseConfiguration>()
                 .AddKormMigrations()

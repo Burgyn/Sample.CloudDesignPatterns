@@ -8,6 +8,7 @@ using System;
 using MassTransit;
 using Sample.CloudDesignPatterns.Domain;
 using Microsoft.Extensions.Options;
+using System.Collections.Generic;
 
 namespace Sample.CloudDesignPatterns.Controllers
 {
@@ -25,6 +26,10 @@ namespace Sample.CloudDesignPatterns.Controllers
             _bus = bus;
             _cloudStorageAccount = CloudStorageAccount.Parse(storageOptions.Value.ConnectionString);
         }
+
+        [HttpGet]
+        public IEnumerable<Photo> Get()
+            => _database.Query<Photo>().Select(p => new { p.Id, p.Name, p.Description });
 
         [HttpPost]
         [ProducesResponseType(201)]
