@@ -6,6 +6,8 @@ param (
 $json = $ARMOutput | convertfrom-json
 #endregion
 
-#region Parse ARM Template Output
+
 Write-Output -InputObject ('Connection string {0} ' -f $json.NamespaceConnectionString.value)
-#endregion
+Write-Host "##vso[task.setvariable variable=AzureServiceBus.ConnectionString;]$json.NamespaceConnectionString.value"
+
+Write-Host "Connection string je: $(AzureServiceBus.ConnectionString)"
