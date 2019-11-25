@@ -2,32 +2,11 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "sites_fri_photos_as_test_name": {
-            "value": "fri-photos-as-deploy"
-        },
-        "servers_fri_photos_dbs_test_name": {
-            "value": "fri-photos-dbs-deploy"
-        },
-        "sites_fri_photos_fa_testing_name": {
-            "value": "fri-photos-fa-deploy"
-        },
-        "serverfarms_fri_photos_asp_test_name": {
-            "value": "fri-photos-asp-deploy"
-        },
-        "components_fri_photos_as_test_name": {
-            "value": "fri-photos-as-deploy"
-        },
-        "serverfarms_ASP_FriPhotosRgTest_b434_name": {
-            "value": "ASP-FriPhotosRgDeploy-b434"
-        },
-        "storageAccounts_friphotossatesting_name": {
-            "value": "friphotossadeploy"
-        },
-        "namespaces_fri_photos_sb_testing_name": {
-            "value": "fri-photos-sb-deploy"
-        },
-        "fri_photos_database_name":{
-            "value":"fri-photos-db-deploy"
+        "deployment_stage_name": {
+            "value": "testing"
+        },        
+        "password": {
+            "value": "super tajne heslo, ktore je ulozene niekte inde"
         }
     }
 }
