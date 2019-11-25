@@ -129,7 +129,7 @@
         {
             "type": "Microsoft.Web/serverfarms",
             "apiVersion": "2018-02-01",
-            "name": "[parameters('serverfarms_ASP_FriPhotosRgTest_b434_name')]",
+            "name": "[variables('AzureFunctionPlanName')]",
             "location": "West Europe",
             "sku": {
                 "name": "Y1",
