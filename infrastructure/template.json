@@ -29,7 +29,7 @@
         "AzureFunctionSiteName": "[concat('fri-photos-fa-', parameters('deployment_stage_name'))]",
         "AppServicePlanName": "[concat('fri-photos-asp-', parameters('deployment_stage_name'))]",
         "AzureFunctionPlanName": "[concat('fri-photos-azp-', parameters('deployment_stage_name'))]",
-        "StorageAccountsName": "[concat('friphotossa', parameters('deployment_stage_name'))])"
+        "StorageAccountsName":   "[concat('friphotossa', parameters('deployment_stage_name'))]"
     },
     "resources": [
         {
