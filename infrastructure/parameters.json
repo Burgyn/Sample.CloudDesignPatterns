@@ -26,12 +26,6 @@
         "namespaces_fri_photos_sb_testing_name": {
             "value": "fri-photos-sb-deploy"
         },
-        "actionGroups_Application_20Insights_20Smart_20Detection_name": {
-            "value": "Application%20Insights%20Smart%20Detection"
-        },
-        "smartdetectoralertrules_failure_anomalies___fri_photos_as_test_name": {
-            "value": "failure anomalies - fri-photos-as-deploy"
-        },
         "fri_photos_database_name":{
             "value":"fri-photos-db-deploy"
         }
