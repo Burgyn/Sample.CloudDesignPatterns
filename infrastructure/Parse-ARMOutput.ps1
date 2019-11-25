@@ -6,14 +6,11 @@ param (
 $json = $ARMOutput | convertfrom-json
 #endregion
 
-Write-Host " Krok 1"
+$serviceBusConnection = $json.NamespaceConnectionString.value
+Write-Host "##vso[task.setvariable variable=AzureServiceBus.ConnectionString]$serviceBusConnection"
 
-Write-Output -InputObject ('Connection string {0} ' -f $json.NamespaceConnectionString.value)
+$databaseConnection = $json.DatabaseConnectionString.value
+Write-Host "##vso[task.setvariable variable=ConnectionStrings.DefaultConnection]$databaseConnection"
 
-Write-Host " Krok 2"
-
-$constring = $json.NamespaceConnectionString.value
-
-Write-Host "##vso[task.setvariable variable=AzureServiceBus.ConnectionString]$constring"
-
-Write-Host " Krok 3"
+$appServiceName = $json.AppServiceName.value
+Write-Host "##vso[task.setvariable variable=fri_photos_service_name]$appServiceName"
