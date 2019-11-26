@@ -29,7 +29,10 @@
         "AzureFunctionSiteName": "[concat('fri-photos-fa-', parameters('deployment_stage_name'))]",
         "AppServicePlanName": "[concat('fri-photos-asp-', parameters('deployment_stage_name'))]",
         "AzureFunctionPlanName": "[concat('fri-photos-azp-', parameters('deployment_stage_name'))]",
-        "StorageAccountsName": "[concat('friphotossa', parameters('deployment_stage_name'))]"
+        "StorageAccountsName": "[concat('friphotossa', parameters('deployment_stage_name'))]",
+        "StorageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('StorageAccountsName'))]",
+        "StorageAccountApiVersion": "[providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]]",
+        "StorageAccountAccessKey": "[listKeys(variables('StorageAccountId'), variables('StorageAccountApiVersion')).keys[0].value]"
     },
     "resources": [
         {
@@ -539,6 +542,10 @@
         {
             "type": "string",
             "value": "[concat('Server=tcp:', variables('sqlServerName'), '.database.windows.net,1433; Initial Catalog=', variables('databaseName'), ';Persist Security Info=False;User ID=FriUser;Password=', parameters('password'), ';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]"
+        },        
+        "StorageAccountConnectionString": {
+            "type": "string",
+            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('StorageAccountsName'), ';AccountKey=', variables('StorageAccountAccessKey'), ';EndpointSuffix=core.windows.net')]"
         }
     }
 }

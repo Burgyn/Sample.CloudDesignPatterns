@@ -14,3 +14,6 @@ Write-Host "##vso[task.setvariable variable=ConnectionStrings.DefaultConnection]
 
 $appServiceName = $json.AppServiceName.value
 Write-Host "##vso[task.setvariable variable=fri_photos_service_name]$appServiceName"
+
+$storageAccountConnectionString = $json.AppServiceName.value
+Write-Host "##vso[task.setvariable variable=AzureWebJobsStorage]$storageAccountConnectionString"
