@@ -126,7 +126,25 @@
                     "keySource": "Microsoft.Storage"
                 },
                 "accessTier": "Hot"
-            }
+            },
+            "resources": [
+                {
+                    "name": "default/photos",
+                    "type": "blobServices/containers",
+                    "apiVersion": "2018-07-01",
+                    "dependsOn": [
+                        "[variables('StorageAccountsName')]"
+                    ]
+                },
+                {
+                    "name": "default/photos-thumbnails",
+                    "type": "blobServices/containers",
+                    "apiVersion": "2018-07-01",
+                    "dependsOn": [
+                        "[variables('StorageAccountsName')]"
+                    ]
+                }
+            ]
         },
         {
             "type": "Microsoft.Web/serverfarms",
@@ -191,23 +209,7 @@
                     "Send"
                 ]
             }
-        },
-        {
-            "type": "Microsoft.Storage/storageAccounts/blobServices",
-            "apiVersion": "2019-04-01",
-            "name": "[concat(variables('StorageAccountsName'), '/default')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountsName'))]"
-            ],
-            "properties": {
-                "cors": {
-                    "corsRules": []
-                },
-                "deleteRetentionPolicy": {
-                    "enabled": false
-                }
-            }
-        },
+        },        
         {
             "type": "Microsoft.Web/sites",
             "apiVersion": "2018-11-01",
@@ -498,31 +500,7 @@
                 "siteName": "fri-photos-fa-testing",
                 "hostNameType": "Verified"
             }
-        },
-        {
-            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-            "apiVersion": "2019-04-01",
-            "name": "[concat(variables('StorageAccountsName'), '/default/azure-webjobs-hosts')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', variables('StorageAccountsName'), 'default')]",
-                "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountsName'))]"
-            ],
-            "properties": {
-                "publicAccess": "None"
-            }
-        },
-        {
-            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-            "apiVersion": "2019-04-01",
-            "name": "[concat(variables('StorageAccountsName'), '/default/azure-webjobs-secrets')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', variables('StorageAccountsName'), 'default')]",
-                "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountsName'))]"
-            ],
-            "properties": {
-                "publicAccess": "None"
-            }
-        }
+        }        
     ],
     "outputs": {
         "NamespaceConnectionString": {
