@@ -9,7 +9,7 @@ namespace Sample.AzureFunctionApps
         public static void Run([ServiceBusTrigger("imagecatalog", Connection = "ServiceBusConnection")]string myQueueItem, ILogger log)
         {
             log.LogInformation($"C# ServiceBus queue trigger function processed message: {myQueueItem}");
-            //Sending mail notification.
+            //var clientId = Environment.GetEnvironmentVariable("ClientId");
         }
     }
 }
