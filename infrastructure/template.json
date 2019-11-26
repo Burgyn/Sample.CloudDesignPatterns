@@ -544,7 +544,7 @@
         },        
         "StorageAccountConnectionString": {
             "type": "string",
-            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('StorageAccountsName'), ';AccountKey=', [listKeys(variables('StorageAccountId'), variables('StorageAccountApiVersion')).keys[0].value], ';EndpointSuffix=core.windows.net')]"
+            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('StorageAccountsName'), ';AccountKey=', listKeys(variables('StorageAccountId'), variables('StorageAccountApiVersion')).keys[0].value, ';EndpointSuffix=core.windows.net')]"
         }
     }
 }
