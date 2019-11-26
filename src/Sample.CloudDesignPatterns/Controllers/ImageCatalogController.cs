@@ -41,7 +41,7 @@ namespace Sample.CloudDesignPatterns.Controllers
             await _database.AddAsync(photo);
             StorageDocumentSas storageDocument = GetSharedAccessReferenceForUpload(photo.Name);
 
-            await _bus.Publish<IImageAcceptedMessage>(new { photo.Name });
+            //await _bus.Publish<IImageAcceptedMessage>(new { photo.Name });
 
             return Created(string.Empty, new { photo.Id, storageDocument });
         }
