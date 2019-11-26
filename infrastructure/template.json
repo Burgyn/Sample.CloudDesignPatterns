@@ -536,7 +536,11 @@
         "AppServiceName": {
             "type": "string",
             "value": "[variables('AppServiceName')]"
-        },        
+        },
+        "AppFunctionName": {
+            "type": "string",
+            "value": "[variables('AzureFunctionSiteName')]"
+        },                
         "DatabaseConnectionString":
         {
             "type": "string",
