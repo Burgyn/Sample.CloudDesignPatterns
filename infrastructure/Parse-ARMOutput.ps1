@@ -20,3 +20,4 @@ Write-Host "##vso[task.setvariable variable=fri_photos_function_name]$appFunctio
 
 $storageAccountConnectionString = $json.StorageAccountConnectionString.value
 Write-Host "##vso[task.setvariable variable=AzureWebJobsStorage]$storageAccountConnectionString"
+Write-Host "##vso[task.setvariable variable=BlobStorage.ConnectionString]$storageAccountConnectionString"
