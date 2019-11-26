@@ -31,8 +31,7 @@
         "AzureFunctionPlanName": "[concat('fri-photos-azp-', parameters('deployment_stage_name'))]",
         "StorageAccountsName": "[concat('friphotossa', parameters('deployment_stage_name'))]",
         "StorageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountsName'))]",
-        "StorageAccountApiVersion": "[providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]]",
-        "StorageAccountAccessKey": "[listKeys(variables('StorageAccountId'), variables('StorageAccountApiVersion')).keys[0].value]"
+        "StorageAccountApiVersion": "[providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]]"
     },
     "resources": [
         {
@@ -545,7 +544,7 @@
         },        
         "StorageAccountConnectionString": {
             "type": "string",
-            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('StorageAccountsName'), ';AccountKey=', variables('StorageAccountAccessKey'), ';EndpointSuffix=core.windows.net')]"
+            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('StorageAccountsName'), ';AccountKey=', [listKeys(variables('StorageAccountId'), variables('StorageAccountApiVersion')).keys[0].value], ';EndpointSuffix=core.windows.net')]"
         }
     }
 }
