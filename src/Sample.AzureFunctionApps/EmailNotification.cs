@@ -1,15 +1,21 @@
 using Microsoft.Azure.WebJobs;
-using Microsoft.Extensions.Logging;
+using SendGrid.Helpers.Mail;
+using System;
 
 namespace Sample.AzureFunctionApps
 {
     public static class EmailNotification
     {
         [FunctionName("EmailNotification")]
-        public static void Run([ServiceBusTrigger("imagecatalog", Connection = "ServiceBusConnection")]string myQueueItem, ILogger log)
-        {
-            log.LogInformation($"C# ServiceBus queue trigger function processed message: {myQueueItem}");
-            //var clientId = Environment.GetEnvironmentVariable("ClientId");
+        public static void Run(
+            [ServiceBusTrigger("imagecatalog", Connection = "ServiceBusConnection")]string myQueueItem,
+            [SendGrid(ApiKey = "CustomSendGridKeyAppSettingName")] out SendGridMessage message)
+        {                        
+            message = new SendGridMessage();
+            message.AddTo(Environment.GetEnvironmentVariable("MailTo"));
+            message.AddContent("text/html", "Obrázok bol prijatý na spracovanie.");
+            message.SetFrom(new EmailAddress(Environment.GetEnvironmentVariable("MailFrom")));
+            message.SetSubject("Fri photo notification");
         }
     }
 }
