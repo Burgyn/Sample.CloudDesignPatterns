@@ -30,7 +30,7 @@
         "AppServicePlanName": "[concat('fri-photos-asp-', parameters('deployment_stage_name'))]",
         "AzureFunctionPlanName": "[concat('fri-photos-azp-', parameters('deployment_stage_name'))]",
         "StorageAccountsName": "[concat('friphotossa', parameters('deployment_stage_name'))]",
-        "StorageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('StorageAccountsName'))]",
+        "StorageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountsName'))]",
         "StorageAccountApiVersion": "[providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]]",
         "StorageAccountAccessKey": "[listKeys(variables('StorageAccountId'), variables('StorageAccountApiVersion')).keys[0].value]"
     },
