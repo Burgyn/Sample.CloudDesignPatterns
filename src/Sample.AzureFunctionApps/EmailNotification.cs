@@ -9,7 +9,7 @@ namespace Sample.AzureFunctionApps
         [FunctionName("EmailNotification")]
         public static void Run(
             [ServiceBusTrigger("imagecatalog", Connection = "ServiceBusConnection")]string myQueueItem,
-            [SendGrid(ApiKey = "CustomSendGridKeyAppSettingName")] out SendGridMessage message)
+            [SendGrid(ApiKey = "SendGridKeyAppSettingName")] out SendGridMessage message)
         {                        
             message = new SendGridMessage();
             message.AddTo(Environment.GetEnvironmentVariable("MailTo"));
