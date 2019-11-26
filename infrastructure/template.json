@@ -38,8 +38,7 @@
             "name": "[variables('serviceBusNamespaceName')]",
             "location": "West Europe",
             "sku": {
-                "name": "Basic",
-                "tier": "Basic"
+                "name": "Standard"
             },
             "properties": {
                 "zoneRedundant": false
