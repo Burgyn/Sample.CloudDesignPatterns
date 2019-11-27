@@ -1,0 +1,122 @@
+{
+	"info": {
+		"_postman_id": "6dcdec43-8b65-4158-b854-914804b5940c",
+		"name": "CloudPrinciple-RefactoredToUseAzureResources",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Post",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ac194140-ec51-4555-9563-6528b039edb1",
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"pm.environment.set(\"ImageName\", jsonData.storageDocument.name);",
+							"pm.environment.set(\"AccessToken\", jsonData.storageDocument.credentials);",
+							"pm.environment.set(\"AzureStorageAccount\", jsonData.storageDocument.blobUri);",
+							"pm.response.to.have.status(201);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"Description\":\"Môj pekný obrázok\",\n\t\"Name\":\"car.jpg\"\n}"
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/api/imagecatalog",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"imagecatalog"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Uload image",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-ms-blob-type",
+						"value": "BlockBlob",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "file",
+					"file": {
+						"src": "/C:/Users/martiniak/Pictures/Camera Roll/129881596_polarr.jpg"
+					}
+				},
+				"url": {
+					"raw": "{{AzureStorageAccount}}{{AccessToken}}",
+					"host": [
+						"{{AzureStorageAccount}}{{AccessToken}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Images",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/api/imagecatalog",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"imagecatalog"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
